@@ -20,7 +20,7 @@ const middleware = require("./middleware.js");
 const sessionOptions = {
     secret: "mysupersecret",
     resave: false,
-    saveUninitalized: true,
+    saveUninitialized: true,
     cookie: {
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
         maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -66,60 +66,57 @@ async function main(){
     await mongoose.connect("mongodb://127.0.0.1:27017/Wonder");
 };
 
-app.listen("8080",()=>{
-    console.log("It is listening");
-});
 
 app.get("/",(req,res)=>{
     res.send("Working");
 });
 
 // app.get("/demo", async(req,res) => {
-//     let fakerUser = new User({
-//         email: "student@gamil.com",
-//         username: "HasSstudents",
-//     });
+    //     let fakerUser = new User({
+        //         email: "student@gamil.com",
+        //         username: "HasSstudents",
+        //     });
+        
+        //     let newUser = await User.register(fakerUser, "HelloPassword");    // to identify the password is unique or not
+        //     res.send(newUser);
 
-//     let newUser = await User.register(fakerUser, "HelloPassword");    // to identify the password is unique or not
-//     res.send(newUser);
-
-// });
-
-// Index Route
-app.get("/listings", wrapAsync(async (req,res)=>{
-    
-    const allLists = await Listing.find({});
-    res.render("index.ejs",{allLists});
-}));
-
-// to add new
-app.get("/listings/new",middleware.isLoggedIn,(req,res)=>{
-    
-    res.render("new.ejs");
-});
-
-//Show Route
-app.get("/listings/:id", wrapAsync(async (req,res)=>{
-    let {id} = req.params;
-    const detail = await Listing.findById(id).populate("review");
-    res.render("show.ejs", {detail});
-}));
-
-//create route
-app.post("/listings",middleware.isLoggedIn, wrapAsync(async (req,res)=>{
-    let result = listingSchema.validate(req.body);
-    if(result.error){
-        throw new expressError(400,result.error);
-    }
-    const newListing = new Listing(req.body.listing);
-    await newListing.save();
-
-    req.flash("success","New listing created successfully");
-    res.redirect("/listings"); 
-}));
-
-// Edit Route
-app.get("/listings/:id/edit",middleware.isLoggedIn,wrapAsync(async (req,res)=>{
+        // });
+        
+        // Index Route
+        app.get("/listings", wrapAsync(async (req,res)=>{
+            
+            const allLists = await Listing.find({});
+            res.render("index.ejs",{allLists});
+        }));
+        
+        // to add new
+        app.get("/listings/new",middleware.isLoggedIn,(req,res)=>{
+            
+            res.render("new.ejs");
+        });
+        
+        //Show Route
+        app.get("/listings/:id", wrapAsync(async (req,res)=>{
+            let {id} = req.params;
+            const detail = await Listing.findById(id).populate("review");
+            res.render("show.ejs", {detail});
+        }));
+        
+        //create route
+        app.post("/listings",middleware.isLoggedIn, wrapAsync(async (req,res)=>{
+            let result = listingSchema.validate(req.body);
+            if(result.error){
+                throw new expressError(400,result.error);
+            }
+            const newListing = new Listing(req.body.listing);
+            await newListing.save();
+            
+            req.flash("success","New listing created successfully");
+            res.redirect("/listings"); 
+        }));
+        
+        // Edit Route
+        app.get("/listings/:id/edit",middleware.isLoggedIn,wrapAsync(async (req,res)=>{
     let {id} = req.params;
     const detail = await Listing.findById(id);
     res.render("edit.ejs",{detail});
@@ -144,7 +141,7 @@ app.post("/listings/:id/review", middleware.isLoggedIn, wrapAsync(async (req,res
     let listing = await Listing.findById(req.params.id);
     let newReview = new Review(req.body.review); 
     listing.review.push(newReview);
-
+    
     await newReview.save();
     await listing.save();
     res.redirect(`/listings/${id}`);
@@ -170,4 +167,9 @@ app.use((err,req,res,next) => {
     let {statusCode=500, message="Something went wrong!"} = err;
     res.render("error.ejs", {message});
     // res.status(statusCode).send(message); 
+});
+
+
+app.listen("8080",()=>{
+    console.log("It is listening");
 });

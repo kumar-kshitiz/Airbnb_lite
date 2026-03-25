@@ -19,6 +19,14 @@
     <!-- <form action="/listings/new" method="GET">
         <button>Add</button>
     </form> -->
+
+<% if (allLists.length === 0) { %>
+    <div class="alert alert-info alert-dismissible fade show col-md-6 mx-auto mt-5" role="alert">
+        <center><h5>No listings found</h5></center>
+        <center><p>Try adjusting your search terms or <a href="/listings" class="alert-link">browse all listings</a></p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } else { %>
 <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
  
 <% for(allList of allLists) {%>
@@ -38,5 +46,6 @@
 
 <% } %>   
 </div>   
+<% } %>
 </body>
  

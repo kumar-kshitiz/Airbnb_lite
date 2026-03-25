@@ -88,6 +88,23 @@ app.get("/",(req,res)=>{
             const allLists = await Listing.find({});
             res.render("index.ejs",{allLists});
         }));
+
+        // Search Route
+        app.get("/listings/search", wrapAsync(async (req,res)=>{
+            const query = req.query.q || "";
+            const searchRegex = new RegExp(query, "i"); // 'i' flag for case-insensitive search
+            
+            const allLists = await Listing.find({
+                $or: [
+                    { title: searchRegex },
+                    { location: searchRegex },
+                    { description: searchRegex },
+                    { country: searchRegex }
+                ]
+            });
+            
+            res.render("index.ejs", { allLists });
+        }));
         
         // to add new
         app.get("/listings/new",middleware.isLoggedIn,(req,res)=>{

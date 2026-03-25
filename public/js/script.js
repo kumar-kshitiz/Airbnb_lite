@@ -15,4 +15,21 @@
         form.classList.add('was-validated')
       }, false)
     })
-  })()
+  })();
+
+// Search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-input');
+    const searchForm = document.querySelector('form[action="/listings/search"]');
+    
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            const query = searchInput.value.trim();
+            if (!query) {
+                e.preventDefault();
+                searchInput.focus();
+                return false;
+            }
+        });
+    }
+});
